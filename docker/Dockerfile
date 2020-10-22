@@ -5,3 +5,5 @@ LABEL SongChao chaosong@bjtu.edu.cn
 RUN apt-get update && apt-get install graphviz -y
 
 RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple pytest graphviz==0.8.4
+
+WORKDIR /mxnet
