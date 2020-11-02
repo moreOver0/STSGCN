@@ -11,7 +11,7 @@ from utils import (construct_model, generate_data,
                    masked_mae_np, masked_mape_np, masked_mse_np)
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--config", type=str, help='configuration file')
+parser.add_argument("--config", type=str, help='configuration file', default='config/PEMS08/individual_GLU_mask_emb.json')
 parser.add_argument("--test", action="store_true", help="test program")
 parser.add_argument("--plot", help="plot network graph", action="store_true")
 parser.add_argument("--save", action="store_true", help="save model")
@@ -110,8 +110,7 @@ if args.plot:
     graph.render('graph')
 
 current_timestamp = int(time.time())
-debug_dir = f'./output/{current_timestamp}/'
-
+debug_dir = f'./output/{str(current_timestamp)}/'
 
 def training(epochs):
     global global_epoch
