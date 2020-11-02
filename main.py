@@ -109,8 +109,8 @@ if args.plot:
     graph.format = 'png'
     graph.render('graph')
 
-current_timestamp = int(time.time())
-debug_dir = f'./output/{str(current_timestamp)}/'
+debug_dir = './output/%d/' % int(time.time())
+
 
 def training(epochs):
     global global_epoch
@@ -147,11 +147,11 @@ def training(epochs):
             forcasting_2d_target = test_y[:, 0, :]
             if not os.path.exists(debug_dir):
                 os.makedirs(debug_dir)
-            np.savetxt(f'{debug_dir}/target.csv', forcasting_2d_target, delimiter=",")
-            np.savetxt(f'{debug_dir}/predict.csv', forcasting_2d, delimiter=",")
-            np.savetxt(f'{debug_dir}/predict_abs_error.csv',
+            np.savetxt('{}/target.csv'.format(debug_dir), forcasting_2d_target, delimiter=",")
+            np.savetxt('{}/predict.csv'.format(debug_dir), forcasting_2d, delimiter=",")
+            np.savetxt('{}/predict_abs_error.csv'.format(debug_dir),
                        np.abs(forcasting_2d - forcasting_2d_target), delimiter=",")
-            np.savetxt(f'{debug_dir}/predict_ape.csv',
+            np.savetxt('{}/predict_ape.csv'.format(debug_dir),
                        np.abs((forcasting_2d - forcasting_2d_target) / forcasting_2d_target), delimiter=",")
 
             tmp_info = []
