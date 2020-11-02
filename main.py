@@ -3,7 +3,7 @@
 import time
 import json
 import argparse
-
+import os
 import numpy as np
 import mxnet as mx
 
@@ -29,7 +29,9 @@ net = construct_model(config)
 batch_size = config['batch_size']
 num_of_vertices = config['num_of_vertices']
 graph_signal_matrix_filename = config['graph_signal_matrix_filename']
-if isinstance(config['ctx'], list):
+if config['ctx'] is None:
+    ctx = mx.cpu()
+elif isinstance(config['ctx'], list):
     ctx = [mx.gpu(i) for i in config['ctx']]
 elif isinstance(config['ctx'], int):
     ctx = mx.gpu(config['ctx'])
@@ -107,6 +109,9 @@ if args.plot:
     graph.format = 'png'
     graph.render('graph')
 
+current_timestamp = int(time.time())
+debug_dir = f'./output/{current_timestamp}/'
+
 
 def training(epochs):
     global global_epoch
@@ -138,6 +143,18 @@ def training(epochs):
 
             test_loader.reset()
             prediction = mod.predict(test_loader)[1].asnumpy()
+
+            forcasting_2d = prediction[:, 0, :]
+            forcasting_2d_target = test_y[:, 0, :]
+            if not os.path.exists(debug_dir):
+                os.makedirs(debug_dir)
+            np.savetxt(f'{debug_dir}/target.csv', forcasting_2d_target, delimiter=",")
+            np.savetxt(f'{debug_dir}/predict.csv', forcasting_2d, delimiter=",")
+            np.savetxt(f'{debug_dir}/predict_abs_error.csv',
+                       np.abs(forcasting_2d - forcasting_2d_target), delimiter=",")
+            np.savetxt(f'{debug_dir}/predict_ape.csv',
+                       np.abs((forcasting_2d - forcasting_2d_target) / forcasting_2d_target), delimiter=",")
+
             tmp_info = []
             for idx in range(config['num_for_predict']):
                 y, x = test_y[:, : idx + 1, :], prediction[:, : idx + 1, :]
